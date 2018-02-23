@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.atenas_monitorasummer.atenas_monitorasummer.Manifest;
@@ -77,12 +78,22 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            List<Event> events =null;
+                            List<Event> events = new ArrayList<>();
+
                             for (DocumentSnapshot document : task.getResult()) {
                                 Log.d("Log", document.getId() + " => " + document.getData());
-                                
+                                Event e = new Event(document.get("name").toString(),"",document.get("date").toString(),"","","");
+                                events.add(e);
+                                Log.v("Log","e.name="+events.get(0).getName());
 
                             }
+
+                            recyclerView.setAdapter(new AdapterEvents(events, getApplicationContext()));
+                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(),
+                                    LinearLayoutManager.VERTICAL, false);
+                            recyclerView.setLayoutManager(layoutManager);
+                            Log.v("Log", "events= "+events.size());
+                            Log.v("Log", "events data= "+events.toString());
                         } else {
                             Log.d("Log", "Error getting documents: ", task.getException());
                         }
